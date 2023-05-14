@@ -1,31 +1,31 @@
 import 'source-map-support/register';
-import { APIGatewayProxyEvent, APIGatewayProxyHandler, APIGatewayProxyResult } from 'aws-lambda';
-import { updateTodo } from '../../businessLogic/todos';
-import { TodoUpdate } from '../../models/Todo.d';
+import { APIGatewayProxyEvent, APIGatewayProxyResult, APIGatewayProxyHandler } from 'aws-lambda';
 import { createLogger } from '../../utils/logger';
 import { getToken } from '../../utils/getJwt';
+import {ProductItem} from "../../models/Product";
+import {getProduct} from "../../businessLogic/products";
 
-const logger = createLogger('updateTodo');
+
+const logger = createLogger('getProduct');
 
 export const handler: APIGatewayProxyHandler = async (
   event: APIGatewayProxyEvent
 ): Promise<APIGatewayProxyResult> => {
-  logger.info('Processing UpdateTodo event...');
+  logger.info('Processing GetProduct event...');
   const jwtToken: string = getToken(event);
-  const todoId = event.pathParameters.todoId;
-  const updateData: TodoUpdate = JSON.parse(event.body);
+  const productId = event.pathParameters.productId;
   const headers = {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Credentials': true
   };
 
   try {
-    await updateTodo(jwtToken, todoId, updateData);
-    logger.info(`Successfully updated the todo item: ${todoId}`);
+    const productItem: ProductItem = await getProduct(jwtToken, productId);
+    logger.info(`Successfully retrieved Product item: ${productId}`);
     return {
-      statusCode: 204,
+      statusCode: 200,
       headers,
-      body: undefined
+      body: JSON.stringify({ productItem })
     };
   } catch (error) {
     logger.error(`Error: ${error.message}`);

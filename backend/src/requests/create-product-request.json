@@ -6,13 +6,19 @@
     "name": {
       "type": "string"
     },
-    "dueDate": {
+    "type": {
+      "type": "string"
+    },
+    "cost": {
      "type": "string"
+    },
+    "description": {
+      "type": "string"
     },
     "attachmentUrl": {
       "type": "string"
     }
   },
-  "required": ["name", "dueDate", "attachmentUrl"],
+  "required": ["name", "type", "cost", "description"],
   "additionalProperties": false
 }

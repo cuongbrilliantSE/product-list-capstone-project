@@ -1,16 +1,17 @@
 import 'source-map-support/register';
 import { APIGatewayProxyEvent, APIGatewayProxyResult, APIGatewayProxyHandler } from 'aws-lambda';
-import { getTodos } from '../../businessLogic/todos';
 import { createLogger } from '../../utils/logger';
 import { getToken } from '../../utils/getJwt';
-import { TodoItem } from '../../models/Todo.d';
+import { ProductItem } from '../../models/Product';
+import {getProducts} from "../../businessLogic/products";
 
-const logger = createLogger('getTodos');
+
+const logger = createLogger('getProducts');
 
 export const handler: APIGatewayProxyHandler = async (
   event: APIGatewayProxyEvent
 ): Promise<APIGatewayProxyResult> => {
-  logger.info('Processing GetTodos event...');
+  logger.info('Processing Getproducts event...');
   const jwtToken: string = getToken(event);
   const headers = {
     'Access-Control-Allow-Origin': '*',
@@ -18,12 +19,12 @@ export const handler: APIGatewayProxyHandler = async (
   };
 
   try {
-    const todoList: TodoItem[] = await getTodos(jwtToken);
-    logger.info('Successfully retrieved todolist');
+    const productList: ProductItem[] = await getProducts(jwtToken);
+    logger.info('Successfully retrieved productlist');
     return {
       statusCode: 200,
       headers,
-      body: JSON.stringify({ todoList })
+      body: JSON.stringify({ productList })
     };
   } catch (error) {
     logger.error(`Error: ${error.message}`);

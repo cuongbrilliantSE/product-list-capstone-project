@@ -1,30 +1,29 @@
 import 'source-map-support/register';
-import { APIGatewayProxyEvent, APIGatewayProxyResult, APIGatewayProxyHandler } from 'aws-lambda';
-import { createTodo } from '../../businessLogic/todos';
+import { APIGatewayProxyEvent, APIGatewayProxyHandler, APIGatewayProxyResult } from 'aws-lambda';
 import { createLogger } from '../../utils/logger';
 import { getToken } from '../../utils/getJwt';
-import { TodoCreate, TodoItem } from '../../models/Todo.d';
+import { deleteProduct } from '../../businessLogic/products';
 
-const logger = createLogger('createTodo');
+const logger = createLogger('deleteProduct');
 
 export const handler: APIGatewayProxyHandler = async (
   event: APIGatewayProxyEvent
 ): Promise<APIGatewayProxyResult> => {
-  logger.info('Processing CreateTodo event...');
+  logger.info('Processing DeleteProduct event...');
   const jwtToken: string = getToken(event);
-  const newTodoData: TodoCreate = JSON.parse(event.body);
+  const productId = event.pathParameters.productId;
   const headers = {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Credentials': true
   };
 
   try {
-    const newTodo: TodoItem = await createTodo(jwtToken, newTodoData);
-    logger.info('Successfully created a new todo item.');
+    await deleteProduct(jwtToken, productId);
+    logger.info(`Successfully deleted product item: ${productId}`);
     return {
-      statusCode: 201,
+      statusCode: 204,
       headers,
-      body: JSON.stringify({ newTodo })
+      body: undefined
     };
   } catch (error) {
     logger.error(`Error: ${error.message}`);

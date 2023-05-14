@@ -1,5 +1,5 @@
 service:
-  name: uda-todo-app
+  name: uda-product-app
 
 plugins:
   - serverless-webpack
@@ -18,9 +18,9 @@ provider:
   tracing: true
   environment:
     AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1'
-    TODOS_TABLE: Todos-${self:provider.stage}
-    TODOS_USER_INDEX: TodosUserIndex
-    IMAGES_S3_BUCKET: udacity-serverless-todo-images-${self:provider.stage}
+    PRODUCTS_TABLE: Products-${self:provider.stage}
+    PRODUCTS_USER_INDEX: ProductsUserIndex
+    IMAGES_S3_BUCKET: udacity-serverless-product-images-${self:provider.stage}
     SIGNED_URL_EXPIRATION: '300'
 
 functions:
@@ -35,19 +35,19 @@ functions:
         Resource:
           - "*"
 
-  GetTodos:
-    handler: src/lambda/http/getTodos.handler
+  GetProducts:
+    handler: src/lambda/http/getProducts.handler
     events:
       - http:
           method: get
-          path: todos
+          path: products
           cors: true
           authorizer: Auth
     iamRoleStatements:
       - Effect: Allow
         Action:
           - dynamodb:Query
-        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.PRODUCTS_TABLE}
       - Effect: "Allow"
         Action:
           - "xray:PutTraceSegments"
@@ -55,19 +55,19 @@ functions:
         Resource:
           - "*"
 
-  GetTodo:
-    handler: src/lambda/http/getTodo.handler
+  GetProduct:
+    handler: src/lambda/http/getProduct.handler
     events:
       - http:
           method: get
-          path: todos/{todoId}
+          path: products/{productId}
           cors: true
           authorizer: Auth
     iamRoleStatements:
       - Effect: Allow
         Action:
           - dynamodb:Query
-        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.PRODUCTS_TABLE}
       - Effect: "Allow"
         Action:
           - "xray:PutTraceSegments"
@@ -75,22 +75,22 @@ functions:
         Resource:
           - "*"
 
-  CreateTodo:
-    handler: src/lambda/http/createTodo.handler
+  CreateProduct:
+    handler: src/lambda/http/createProduct.handler
     events:
       - http:
           method: post
-          path: todos
+          path: products
           cors: true
           authorizer: Auth
           request:
             schema:
-              application/json: ${file(src/requests/create-todo-request.json)}
+              application/json: ${file(src/requests/create-product-request.json)}
     iamRoleStatements:
       - Effect: Allow
         Action:
           - dynamodb:PutItem
-        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.PRODUCTS_TABLE}
       - Effect: "Allow"
         Action:
           - "xray:PutTraceSegments"
@@ -98,22 +98,22 @@ functions:
         Resource:
           - "*"
 
-  UpdateTodo:
-    handler: src/lambda/http/updateTodo.handler
+  UpdateProduct:
+    handler: src/lambda/http/updateProduct.handler
     events:
       - http:
           method: put
-          path: todos/{todoId}
+          path: products/{productId}
           cors: true
           authorizer: Auth
           request:
             schema:
-              application/json: ${file(src/requests/update-todo-request.json)}
+              application/json: ${file(src/requests/update-product-request.json)}
     iamRoleStatements:
       - Effect: Allow
         Action:
           - dynamodb:UpdateItem
-        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.PRODUCTS_TABLE}
       - Effect: "Allow"
         Action:
           - "xray:PutTraceSegments"
@@ -121,19 +121,19 @@ functions:
         Resource:
           - "*"
 
-  DeleteTodo:
-    handler: src/lambda/http/deleteTodo.handler
+  DeleteProduct:
+    handler: src/lambda/http/deleteProduct.handler
     events:
       - http:
           method: delete
-          path: todos/{todoId}
+          path: products/{productId}
           cors: true
           authorizer: Auth
     iamRoleStatements:
       - Effect: Allow
         Action:
           - dynamodb:DeleteItem
-        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.PRODUCTS_TABLE}
       - Effect: "Allow"
         Action:
           - "xray:PutTraceSegments"
@@ -146,7 +146,7 @@ functions:
     events:
       - http:
           method: post
-          path: todos/{todoId}/attachment
+          path: products/{productId}/attachment
           cors: true
           authorizer: Auth
     iamRoleStatements:
@@ -158,7 +158,7 @@ functions:
       - Effect: Allow
         Action:
           - dynamodb:UpdateItem
-        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.PRODUCTS_TABLE}
       - Effect: "Allow"
         Action:
           - "xray:PutTraceSegments"
@@ -179,29 +179,29 @@ resources:
         RestApiId:
           Ref: ApiGatewayRestApi
 
-    TodosTable:
+    ProductsTable:
       Type: AWS::DynamoDB::Table
       Properties:
         AttributeDefinitions:
           - AttributeName: userId
             AttributeType: S
-          - AttributeName: todoId
+          - AttributeName: productId
             AttributeType: S
-          - AttributeName: dueDate
+          - AttributeName: type
             AttributeType: S
         KeySchema:
           - AttributeName: userId
             KeyType: HASH
-          - AttributeName: todoId
+          - AttributeName: productId
             KeyType: RANGE
         BillingMode: PAY_PER_REQUEST
-        TableName: ${self:provider.environment.TODOS_TABLE}
+        TableName: ${self:provider.environment.PRODUCTS_TABLE}
         LocalSecondaryIndexes:
-          - IndexName: ${self:provider.environment.TODOS_USER_INDEX}
+          - IndexName: ${self:provider.environment.PRODUCTS_USER_INDEX}
             KeySchema:
               - AttributeName: userId
                 KeyType: HASH
-              - AttributeName: dueDate
+              - AttributeName: type
                 KeyType: RANGE
             Projection:
               ProjectionType: ALL
@@ -232,7 +232,7 @@ resources:
       Type: AWS::S3::BucketPolicy
       Properties:
         PolicyDocument:
-          Id: UdacityServerlessTodo
+          Id: UdacityServerlessProduct
           Version: "2012-10-17"
           Statement:
             - Sid: PublicReadForGetBucketObjects
