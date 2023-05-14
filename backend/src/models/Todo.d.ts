@@ -1,23 +1,28 @@
 export interface TodoItem {
   userId: string;
   createdAt: string;
-  todoId: string;
   name: string;
-  dueDate: string;
-  done: boolean;
+  productId: string;
+  type: string;
+  cost: string;
+  description: string;
   attachmentUrl: string;
 }
 
 // Fields in a request to create a single TODO item.
 export interface TodoCreate {
   name: string;
-  dueDate: string;
+  type: string;
+  cost: string;
+  description: string;
   attachmentUrl: string;
 }
 
 // Fields in a request to update a single TODO item.
 export interface TodoUpdate {
   name: string;
-  dueDate: string;
-  done: boolean;
+  type: string;
+  cost: string;
+  description: string;
+  attachmentUrl: string;
 }
