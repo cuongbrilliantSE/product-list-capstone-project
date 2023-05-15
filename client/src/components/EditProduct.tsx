@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { Form, Button } from 'semantic-ui-react';
 import Auth from '../auth/Auth';
-import { getUploadUrl, uploadFile, getTodo } from '../api/todos-api';
-import { TodoItem } from '../types/Todo.d';
+import {getProduct, getUploadUrl, uploadFile} from '../api/products-api';
+import {ProductItem} from "../types/Product";
 
 enum UploadState {
   NoUpload,
@@ -10,27 +10,27 @@ enum UploadState {
   UploadingFile
 }
 
-interface EditTodoProps {
+interface EditProductProps {
   match: {
     params: {
-      todoId: string;
+      productId: string;
     };
   };
   auth: Auth;
 }
 
-interface EditTodoState {
-  todo: TodoItem;
+interface EditProductState {
+  product: ProductItem;
   file: any;
   uploadState: UploadState;
 }
 
-export class EditTodo extends React.PureComponent<EditTodoProps, EditTodoState> {
-  state: EditTodoState = {
-    todo: {
+export class EditProduct extends React.PureComponent<EditProductProps, EditProductState> {
+  state: EditProductState = {
+    product: {
       userId: '',
       createdAt: '',
-      todoId: '',
+      productId: '',
       name: '',
       dueDate: '',
       done: false,
@@ -42,12 +42,12 @@ export class EditTodo extends React.PureComponent<EditTodoProps, EditTodoState> 
 
   async componentDidMount() {
     const idToken = this.props.auth.getIdToken();
-    const todoId = this.props.match.params.todoId;
+    const productId = this.props.match.params.productId;
     try {
-      const todo = await getTodo(idToken, todoId);
-      this.setState({ todo });
+      const product = await getProduct(idToken, productId);
+      this.setState({ product });
     } catch (error: any) {
-      console.error(`Failed to fetch todo (${todoId}):  ${error.message}`);
+      console.error(`Failed to fetch product (${productId}):  ${error.message}`);
     }
   }
 
@@ -72,7 +72,7 @@ export class EditTodo extends React.PureComponent<EditTodoProps, EditTodoState> 
       this.setUploadState(UploadState.FetchingPresignedUrl);
       const uploadUrl = await getUploadUrl(
         this.props.auth.getIdToken(),
-        this.props.match.params.todoId
+        this.props.match.params.productId
       );
 
       this.setUploadState(UploadState.UploadingFile);

@@ -1,34 +1,34 @@
-export interface TodoItem {
+export interface ProductItem {
+  productId: string;
   userId: string;
   createdAt: string;
-  todoId: string;
   name: string;
   dueDate: string;
   done: boolean;
   attachmentUrl: string;
 }
 
-export interface GetTodosResp {
-  todoList: TodoItem[];
+export interface GetProductsResp {
+  productList: ProductItem[];
 }
 
-export interface GetTodoResp {
-  todoItem: TodoItem[];
+export interface GetProductResp {
+  productItem: ProductItem[];
 }
 
-export interface CreateTodoResp {
-  newTodo: TodoItem;
+export interface CreateProductResp {
+  newProduct: ProductItem;
 }
 
 // Fields in a request to create a single TODO item.
-export interface TodoCreate {
+export interface ProductCreate {
   name: string;
   dueDate: string;
   attachmentUrl: string;
 }
 
 // Fields in a request to update a single TODO item.
-export interface TodoUpdate {
+export interface ProductUpdate {
   name: string;
   dueDate: string;
   done: boolean;

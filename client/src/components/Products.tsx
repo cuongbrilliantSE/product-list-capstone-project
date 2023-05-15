@@ -14,105 +14,105 @@ import {
   Loader
 } from 'semantic-ui-react';
 
-import { createTodo, deleteTodo, getTodos, updateTodo } from '../api/todos-api';
+import { createProduct, deleteProduct, getProducts, updateProduct } from '../api/products-api';
 import Auth from '../auth/Auth';
-import { TodoItem } from '../types/Todo.d';
+import { ProductItem } from '../types/Product.d';
 
-interface TodosProps {
+interface ProductsProps {
   auth: Auth;
   history: History;
 }
-interface TodosState {
-  todos: TodoItem[];
-  newTodoName: string;
-  loadingTodos: boolean;
+interface ProductsState {
+  products: ProductItem[];
+  newProductName: string;
+  loadingProducts: boolean;
 }
-export class Todos extends React.PureComponent<TodosProps, TodosState> {
-  state: TodosState = {
-    todos: [],
-    newTodoName: '',
-    loadingTodos: true
+export class Products extends React.PureComponent<ProductsProps, ProductsState> {
+  state: ProductsState = {
+    products: [],
+    newProductName: '',
+    loadingProducts: true
   };
 
   async componentDidMount() {
     try {
-      const todos = await getTodos(this.props.auth.getIdToken());
+      const products = await getProducts(this.props.auth.getIdToken());
       this.setState({
-        todos,
-        loadingTodos: false
+        products,
+        loadingProducts: false
       });
     } catch (error: any) {
-      console.error(`Failed to fetch todos: ${error.message}`);
+      console.error(`Failed to fetch products: ${error.message}`);
     }
   }
 
   handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    this.setState({ newTodoName: event.target.value });
+    this.setState({ newProductName: event.target.value });
   };
 
-  onEditButtonClick = (todoId: string) => {
-    this.props.history.push(`/todos/${todoId}/edit`);
+  onEditButtonClick = (productId: string) => {
+    this.props.history.push(`/products/${productId}/edit`);
   };
 
-  onTodoCreate = async (event: React.ChangeEvent<HTMLButtonElement>) => {
+  onProductCreate = async (event: React.ChangeEvent<HTMLButtonElement>) => {
     try {
       const dueDate = this.calculateDueDate();
-      const newTodo = await createTodo(this.props.auth.getIdToken(), {
-        name: this.state.newTodoName,
+      const newProduct = await createProduct(this.props.auth.getIdToken(), {
+        name: this.state.newProductName,
         dueDate,
         attachmentUrl: ''
       });
       this.setState({
-        todos: [...this.state.todos, newTodo],
-        newTodoName: ''
+        products: [...this.state.products, newProduct],
+        newProductName: ''
       });
     } catch {
-      alert('Todo creation failed');
+      alert('Product creation failed');
     }
   };
 
-  onTodoDelete = async (todoId: string, createdAt: string) => {
+  onProductDelete = async (productId: string, createdAt: string) => {
     try {
-      await deleteTodo(this.props.auth.getIdToken(), todoId);
+      await deleteProduct(this.props.auth.getIdToken(), productId);
       this.setState({
-        todos: this.state.todos.filter((todo) => todo.todoId !== todoId)
+        products: this.state.products.filter((product) => product.productId !== productId)
       });
     } catch {
-      alert('Todo deletion failed');
+      alert('Product deletion failed');
     }
   };
 
-  onTodoCheck = async (pos: number) => {
+  onProductCheck = async (pos: number) => {
     try {
-      const todo = this.state.todos[pos];
-      await updateTodo(this.props.auth.getIdToken(), todo.todoId, {
-        name: todo.name,
-        dueDate: todo.dueDate,
-        done: !todo.done
+      const product = this.state.products[pos];
+      await updateProduct(this.props.auth.getIdToken(), product.productId, {
+        name: product.name,
+        dueDate: product.dueDate,
+        done: !product.done
       });
       this.setState({
-        todos: update(this.state.todos, {
-          [pos]: { done: { $set: !todo.done } }
+        products: update(this.state.products, {
+          [pos]: { done: { $set: !product.done } }
         })
       });
     } catch {
-      alert('Todo deletion failed');
+      alert('Product deletion failed');
     }
   };
 
   render() {
     return (
       <div>
-        <Header as="h1">TODOs</Header>
+        <Header as="h1">PRODUCTS</Header>
 
-        {this.renderCreateTodoInput()}
+        {this.renderCreateProductInput()}
 
-        {this.renderTodos()}
+        {this.renderProducts()}
       </div>
     );
   }
 
-  renderCreateTodoInput() {
+  renderCreateProductInput() {
     return (
       <Grid.Row>
         <Grid.Column width={16}>
@@ -122,7 +122,7 @@ export class Todos extends React.PureComponent<TodosProps, TodosState> {
               labelPosition: 'left',
               icon: 'add',
               content: 'New task',
-              onClick: this.onTodoCreate
+              onClick: this.onProductCreate
             }}
             fluid
             actionPosition="left"
@@ -137,41 +137,41 @@ export class Todos extends React.PureComponent<TodosProps, TodosState> {
     );
   }
 
-  renderTodos() {
-    if (this.state.loadingTodos) {
+  renderProducts() {
+    if (this.state.loadingProducts) {
       return this.renderLoading();
     }
 
-    return this.renderTodosList();
+    return this.renderProductsList();
   }
 
   renderLoading() {
     return (
       <Grid.Row>
         <Loader indeterminate active inline="centered">
-          Loading TODOs
+          Loading PRODUCTS
         </Loader>
       </Grid.Row>
     );
   }
 
-  renderTodosList() {
+  renderProductsList() {
     return (
       <Grid padded>
-        {this.state.todos.map((todo, pos) => {
+        {this.state.products.map((product, pos) => {
           return (
-            <Grid.Row key={todo.todoId}>
+            <Grid.Row key={product.productId}>
               <Grid.Column width={1} verticalAlign="middle">
-                <Checkbox onChange={() => this.onTodoCheck(pos)} checked={todo.done} />
+                <Checkbox onChange={() => this.onProductCheck(pos)} checked={product.done} />
               </Grid.Column>
               <Grid.Column width={10} verticalAlign="middle">
-                {todo.name}
+                {product.name}
               </Grid.Column>
               <Grid.Column width={3} floated="right">
-                {todo.dueDate}
+                {product.dueDate}
               </Grid.Column>
               <Grid.Column width={1} floated="right">
-                <Button icon color="blue" onClick={() => this.onEditButtonClick(todo.todoId)}>
+                <Button icon color="blue" onClick={() => this.onEditButtonClick(product.productId)}>
                   <Icon name="pencil" />
                 </Button>
               </Grid.Column>
@@ -179,12 +179,12 @@ export class Todos extends React.PureComponent<TodosProps, TodosState> {
                 <Button
                   icon
                   color="red"
-                  onClick={() => this.onTodoDelete(todo.todoId, todo.createdAt)}
+                  onClick={() => this.onProductDelete(product.productId, product.createdAt)}
                 >
                   <Icon name="delete" />
                 </Button>
               </Grid.Column>
-              {todo.attachmentUrl && <Image src={todo.attachmentUrl} size="small" wrapped />}
+              {product.attachmentUrl && <Image src={product.attachmentUrl} size="small" wrapped />}
               <Grid.Column width={16}>
                 <Divider />
               </Grid.Column>
