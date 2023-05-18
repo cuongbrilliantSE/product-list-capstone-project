@@ -201,8 +201,6 @@ resources:
             KeySchema:
               - AttributeName: userId
                 KeyType: HASH
-              - AttributeName: type
-                KeyType: RANGE
             Projection:
               ProjectionType: ALL
 
