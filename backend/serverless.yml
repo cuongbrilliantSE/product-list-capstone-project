@@ -187,7 +187,7 @@ resources:
             AttributeType: S
           - AttributeName: productId
             AttributeType: S
-          - AttributeName: type
+          - AttributeName: category
             AttributeType: S
         KeySchema:
           - AttributeName: userId
@@ -201,6 +201,8 @@ resources:
             KeySchema:
               - AttributeName: userId
                 KeyType: HASH
+              - AttributeName: category
+                KeyType: RANGE
             Projection:
               ProjectionType: ALL
 

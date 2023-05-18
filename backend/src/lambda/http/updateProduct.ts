@@ -5,14 +5,14 @@ import { getToken } from '../../utils/getJwt';
 import {ProductUpdate} from "../../models/Product";
 import {updateProduct} from "../../businessLogic/products";
 
-const logger = createLogger('updateTodo');
+const logger = createLogger('updateProduct');
 
 export const handler: APIGatewayProxyHandler = async (
   event: APIGatewayProxyEvent
 ): Promise<APIGatewayProxyResult> => {
-  logger.info('Processing UpdateTodo event...');
+  logger.info('Processing UpdateProduct event...');
   const jwtToken: string = getToken(event);
-  const todoId = event.pathParameters.todoId;
+  const productId = event.pathParameters.productId;
   const updateData: ProductUpdate = JSON.parse(event.body);
   const headers = {
     'Access-Control-Allow-Origin': '*',
@@ -20,8 +20,8 @@ export const handler: APIGatewayProxyHandler = async (
   };
 
   try {
-    await updateProduct(jwtToken, todoId, updateData);
-    logger.info(`Successfully updated the todo item: ${todoId}`);
+    await updateProduct(jwtToken, productId, updateData);
+    logger.info(`Successfully updated the product item: ${productId}`);
     return {
       statusCode: 204,
       headers,

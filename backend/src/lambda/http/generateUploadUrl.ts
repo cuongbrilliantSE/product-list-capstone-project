@@ -11,14 +11,14 @@ export const handler: APIGatewayProxyHandler = async (
 ): Promise<APIGatewayProxyResult> => {
   logger.info('Processing GenerateUploadUrl event...');
   const jwtToken: string = getToken(event);
-  const todoId = event.pathParameters.todoId;
+  const productId = event.pathParameters.productId;
   const headers = {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Credentials': true
   };
 
   try {
-    const signedUrl: string = await generateUploadUrl(jwtToken, todoId);
+    const signedUrl: string = await generateUploadUrl(jwtToken, productId);
     logger.info('Successfully created signed url.');
     return {
       statusCode: 201,

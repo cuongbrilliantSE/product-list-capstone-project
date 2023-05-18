@@ -6,7 +6,7 @@ import {ProductItem, ProductUpdate} from "../models/Product";
 
 
 const XAWS = AWSXRay.captureAWS(AWS);
-const logger = createLogger('todoAccess');
+const logger = createLogger('productAccess');
 
 export class ProductAccess {
   constructor(
@@ -56,17 +56,17 @@ export class ProductAccess {
   }
 
   async updateProduct(userId: string, productId: string, updateData: ProductUpdate): Promise<void> {
-    logger.info(`Updating a todo item: ${productId}`);
+    logger.info(`Updating a product item: ${productId}`);
     await this.docClient
       .update({
         TableName: this.productsTable,
         Key: { userId, productId },
         ConditionExpression: 'attribute_exists(productId)',
-        UpdateExpression: 'set #n = :n, type = :type, cost = :cost, description = :description',
+        UpdateExpression: 'set #n = :n, category = :category, cost = :cost, description = :description',
         ExpressionAttributeNames: { '#n': 'name' },
         ExpressionAttributeValues: {
           ':n': updateData.name,
-          ':type': updateData.type,
+          ':category': updateData.category,
           ':cost': updateData.cost,
           ':description': updateData.description,
         }

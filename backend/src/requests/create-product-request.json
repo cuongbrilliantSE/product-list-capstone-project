@@ -6,7 +6,7 @@
     "name": {
       "type": "string"
     },
-    "type": {
+    "category": {
       "type": "string"
     },
     "cost": {
@@ -19,6 +19,6 @@
       "type": "string"
     }
   },
-  "required": ["name", "type", "cost", "description"],
+  "required": ["name", "category", "cost", "description"],
   "additionalProperties": false
 }
