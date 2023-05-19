@@ -1,11 +1,11 @@
-# Udacity - Cloud Developer Nanodegree Project 4
+# Udacity - Cloud Developer Nanodegree Capstone
 
 ## Functionality of the application
 
-The application allows creating/removing/updating/fetching TODO items. Each TODO item can optionally have an attachment image. Each user only has access to TODO items that he/she has created.
+The application allows creating/removing/updating/fetching Product items. Each Product item can optionally have an attachment image. Each user only has access to Product items that he/she has created.
 
 <div align="center">
-  <img src="./screenshots/todo_app.png" alt="Todo App" style="zoom:40%;" />
+  <img src="./screenshots/product_app.png" alt="Product App" style="zoom:40%;" />
 </div>
 
 ***
@@ -14,22 +14,23 @@ The application allows creating/removing/updating/fetching TODO items. Each TODO
 
 The following lambda functions have been implemented (and set up in serverless.yml):
 - Auth: Lambda authorizer (formerly custom authorizer)
-- GetTodos: retrieves all todos for
-- GetTodo: retrieves one todo (by id)
-- CreateTodo: creates a new todo item
-- UpdateTodo: updates a todo item
-- DeleteTodo: removes a todo item
+- GetProducts: retrieves all products for
+- GetProduct: retrieves one product (by id)
+- CreateProduct: creates a new product item
+- UpdateProduct: updates a product item
+- DeleteProduct: removes a product item
 - GenerateUploadUrl: returns a signed url for uploading an image file to AWS S3
 
-The JSON shape of a todo item
+The JSON shape of a product item
 ```
   {
-    "todoId": "123",
-    "createdAt": "2019-07-27T20:01:45.424Z",
-    "name": "Buy milk",
-    "dueDate": "2019-07-29T20:01:45.424Z",
-    "done": false,
-    "attachmentUrl": "http://example.com/image.png"
+    "cost": 4,
+    "attachmentUrl": "https://udacity-serverless-product-images-dev.s3.amazonaws.com/4f8a50d2-b87e-423a-bad5-732d5b463ac1",
+    "category": "sđfdfdfd",
+    "createdAt": "2023-05-18T17:41:20.215Z",
+    "description": "dffd",
+    "name": "dfdfsdfdf",
+    "productId": "4f8a50d2-b87e-423a-bad5-732d5b463ac1"
   }
 ```
 All functions are already connected to appropriate events from API Gateway.
@@ -40,19 +41,23 @@ Authentication is implemented with Auth0 (using asymmetrically encrypted JWT tok
 ***
 ## Frontend
 
-The `client` folder contains a web application that can use the API that should be developed in the project. The apiId binding in `config.ts` should be set to the correct value.
+The `client` folder contains a web application that can use the API that should be developed in the project. The apiId binding in `environment.ts` should be set to the correct value.
 
 This file configures your client application just as it was done in the course and contains an API endpoint and Auth0 configuration:
 
 ```ts
-const apiId = '...' API Gateway id
-export const apiEndpoint = `https://${apiId}.execute-api.us-east-1.amazonaws.com/dev`
+let apiId = '....'; // API Gateway id
+export const environment = {
+    production: false,
+    apiEndpoint: `https://${apiId}.execute-api.us-east-1.amazonaws.com/dev`,
+    auth0: {
+        domain: '...',
+        clientId: '....',
+        redirectUri: 'http://localhost:4200/callback'
+    }
+};
 
-export const authConfig = {
-  domain: '...',    // Domain from Auth0
-  clientId: '...',  // Client id from an Auth0 application
-  callbackUrl: 'http://localhost:3000/callback'
-}
+
 ```
 
 ***
@@ -72,15 +77,15 @@ sls deploy -v
 
 ## Frontend
 
-To run a client application first edit the `client/src/config.ts` file to set correct parameters. And then run the following commands:
+To run a client application first edit the `client/src/app/environments/environment.ts` file to set correct parameters. And then run the following commands:
 
 ```
 cd client
 npm install
-npm run start
+npm start
 ```
 
-This should start a development server with the React application that will interact with the serverless TODO application.
+This should start a development server with the React application that will interact with the serverless Product application.
 
 ***
 
@@ -118,7 +123,7 @@ logger.info('User was authorized', {
 ```
 
 <div align="center">
-  <img src="./screenshots/log_events.png" alt="DeleteTodo log" style="zoom:40%;" />
+  <img src="./screenshots/log_events.png" alt="DeleteProduct log" style="zoom:40%;" />
 </div>
 
 ***
